@@ -5,8 +5,6 @@ param principalId string
 
 param principalType string
 
-param userId string
-
 resource openai 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
   name: take('openai-${uniqueString(resourceGroup().id)}', 64)
   location: location
@@ -25,21 +23,11 @@ resource openai 'Microsoft.CognitiveServices/accounts@2024-10-01' = {
 }
 
 resource openai_CognitiveServicesOpenAIContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(openai.id, principalId, subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')) // Cognitive Services User role
+  name: guid(openai.id, principalId, subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a001fd3d-188f-4b5d-821b-7da978bf7442'))
   properties: {
     principalId: principalId
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'a001fd3d-188f-4b5d-821b-7da978bf7442')
     principalType: principalType
-  }
-  scope: openai
-}
-
-resource openai_CognitiveServicesOpenAILocalUser 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (!empty(userId)) {
-  name: guid(openai.id, userId, subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')) // Cognitive Services User role
-  properties: {
-    principalId: userId
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd')
-    principalType: 'user'
   }
   scope: openai
 }
